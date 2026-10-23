@@ -1,0 +1,62 @@
+{
+  "name": "Error Handler - Project Request Orchestrator",
+  "nodes": [
+    {
+      "id": "169daae5-1924-4ed6-8e59-280472929d07",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {},
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    },
+    {
+      "id": "b75fb2f1-b297-482b-8214-e9bf7f9b08c0",
+      "name": "Alert Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "REPLACE_TELEGRAM_CHAT_ID",
+        "text": "={{ '⚠️ Error in ' + $json.workflow.name + '\\nNode: ' + $json.execution.lastNodeExecuted + '\\nError: ' + $json.execution.error.message + '\\nExecution: ' + $json.execution.url }}"
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Alert Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}
